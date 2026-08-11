@@ -104,6 +104,8 @@ Returns latest transactions ordered by timestamp descending.
 
 ## Testing
 
+xUnit
+
 ```bash
 cd backend
 dotnet test
@@ -130,17 +132,22 @@ Build and load the image locally before deploying:
 docker build -t financial-monitor:latest .
 ```
 
+**LOGS**
 
+backend log with Serilog 
+
+path:
+
+financial-monitor\backend\src\FinancialMonitor.Api\Logs 
 
 ## Distributed Architecture – Redis SignalR Backplane
 
 1.Use a shared database such as PostgreSQL, SQL Server, or Azure SQL instead of per-pod SQLite.
 
-2.Redis is optional in the local MVP.
-When Redis:ConnectionString is configured, Redis is used as a SignalR backplane to synchronize messages between multiple API replicas.
-set Redis ConnectionString in appsettings.json | Environment Variable
+2.Redis is optional in the local MVP. When Redis:ConnectionString is configured, Redis is used as a SignalR backplane to synchronize messages between multiple API replicas. set Redis ConnectionString in appsettings.json | Environment Variable
 
 More in detail:
+
 The problem:
 When running multiple API replicas, a client connected to Pod A may not receive a transaction handled by Pod B because each pod has its own SignalR connections.
 
@@ -171,6 +178,7 @@ React /add
 Current Configuration
 
 The solution:
+
 Redis is optional in the local MVP.
 
 If Redis:ConnectionString is empty, the application uses regular in-process SignalR. When a Redis connection string is provided, SignalR uses AddStackExchangeRedis as the backplane.

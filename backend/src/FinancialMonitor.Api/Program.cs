@@ -38,7 +38,7 @@ var signalRBuilder = builder.Services.AddSignalR()
         options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-
+//Redis backplane for multi-replica
 if (!string.IsNullOrWhiteSpace(redisConnection))
 {
     signalRBuilder.AddStackExchangeRedis(redisConnection);

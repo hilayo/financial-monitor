@@ -9,10 +9,14 @@ namespace FinancialMonitor.Api.Controllers;
 public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
+    private readonly ILogger<TransactionsController> _logger;
 
-    public TransactionsController(ITransactionService transactionService)
+    public TransactionsController(
+        ITransactionService transactionService,
+        ILogger<TransactionsController> logger)
     {
         _transactionService = transactionService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -22,7 +26,20 @@ public class TransactionsController : ControllerBase
         [FromBody] TransactionRequest request,
         CancellationToken cancellationToken)
     {
+        //_logger.LogInformation(
+        //    "Creating transaction. TransactionId={TransactionId}, Amount={Amount}, Currency={Currency}, Status={Status}",
+        //    request.TransactionId,
+        //    request.Amount,
+        //    request.Currency,
+        //    request.Status);
+
         var transaction = await _transactionService.ProcessAsync(request, cancellationToken);
+
+        //_logger.LogInformation(
+        //    "Transaction created. TransactionId={TransactionId}, Status={Status}",
+        //    transaction.TransactionId,
+        //    transaction.Status);
+
         return CreatedAtAction(nameof(GetLatest), new { id = transaction.TransactionId }, transaction);
     }
 
@@ -32,7 +49,12 @@ public class TransactionsController : ControllerBase
         [FromQuery] int limit = 50,
         CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("Fetching latest transactions. Limit={Limit}", limit);
+
         var transactions = await _transactionService.GetLatestAsync(limit, cancellationToken);
+
+        _logger.LogInformation("Returned {Count} transactions", transactions.Count);
+
         return Ok(transactions);
     }
 }
