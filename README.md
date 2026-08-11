@@ -135,11 +135,12 @@ docker build -t financial-monitor:latest .
 ## Distributed Architecture – Redis SignalR Backplane
 
 1.Use a shared database such as PostgreSQL, SQL Server, or Azure SQL instead of per-pod SQLite.
+
 2.Redis is optional in the local MVP.
 When Redis:ConnectionString is configured, Redis is used as a SignalR backplane to synchronize messages between multiple API replicas.
 set Redis ConnectionString in appsettings.json | Environment Variable
 
-More in detail
+More in detail:
 The problem:
 When running multiple API replicas, a client connected to Pod A may not receive a transaction handled by Pod B because each pod has its own SignalR connections.
 
