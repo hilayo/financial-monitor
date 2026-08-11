@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { API_BASE_URL } from '../types/transaction';
-import type { TransactionRequest, TransactionStatus } from '../types/transaction';
+import { Currency, TransactionStatus, currencies, statuses } from '../../types/enums';
+import { API_BASE_URL } from '../../types/transaction';
+import type { TransactionRequest } from '../../types/transaction';
 import './AddTransaction.css';
-
-const currencies = ['USD', 'EUR', 'GBP', 'ILS'];
-const statuses: TransactionStatus[] = ['Pending', 'Completed', 'Failed'];
 
 function createMockTransaction(): TransactionRequest {
   return {
@@ -21,8 +19,8 @@ export function AddTransaction() {
   const [form, setForm] = useState<TransactionRequest>({
     transactionId: crypto.randomUUID(),
     amount: 1500.5,
-    currency: 'USD',
-    status: 'Pending',
+    currency: Currency.USD,
+    status: TransactionStatus.Pending,
     timestamp: new Date().toISOString(),
   });
   const [message, setMessage] = useState<string | null>(null);

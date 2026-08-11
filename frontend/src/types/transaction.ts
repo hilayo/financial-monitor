@@ -1,4 +1,5 @@
-export type TransactionStatus = 'Pending' | 'Completed' | 'Failed';
+export { TransactionStatus } from './enums';
+import type { TransactionStatus } from './enums';
 
 export interface Transaction {
   transactionId: string;

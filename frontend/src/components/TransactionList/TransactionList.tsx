@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import type { Transaction, TransactionStatus } from '../types/transaction';
+import { StatusFilter, TransactionStatus } from '../../types/enums';
+import type { Transaction } from '../../types/transaction';
 import './TransactionList.css';
 
-export type StatusFilter = TransactionStatus | 'All';
+export type { StatusFilter };
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -12,9 +13,9 @@ interface TransactionListProps {
 }
 
 const statusClass: Record<TransactionStatus, string> = {
-  Pending: 'status-pending',
-  Completed: 'status-completed',
-  Failed: 'status-failed',
+  [TransactionStatus.Pending]: 'status-pending',
+  [TransactionStatus.Completed]: 'status-completed',
+  [TransactionStatus.Failed]: 'status-failed',
 };
 
 function formatAmount(amount: number, currency: string) {
@@ -31,7 +32,7 @@ export function TransactionList({
 }: TransactionListProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const filtered =
-    statusFilter === 'All'
+    statusFilter === StatusFilter.All
       ? transactions
       : transactions.filter((transaction) => transaction.status === statusFilter);
 

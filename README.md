@@ -23,7 +23,7 @@ See [ADR-001](docs/ADR-001-distributed-signalr.md) for distributed deployment de
 
 - **Backend (.NET 8)**: REST ingestion, SignalR hub, SQLite storage with WAL + write locking, Redis backplane
 - **Frontend (React + TypeScript)**: `/add` simulator, `/monitor` live dashboard with batching + virtualization
-- **Tests**: xUnit + FluentAssertions covering validation, service flow, repository concurrency
+- **Tests**: Backend xUnit + FluentAssertions; frontend Jest + React Testing Library
 - **DevOps**: Multi-stage Dockerfile, docker-compose, Kubernetes manifests
 
 
@@ -118,16 +118,18 @@ Returns a paged list of transactions ordered by timestamp descending.
 
 ## Testing
 
-xUnit
+**Backend** — xUnit + FluentAssertions
 
 ```bash
 cd backend
 dotnet test
 ```
 
+**Frontend** — Jest + React Testing Library
+
 ```bash
 cd frontend
-npm run build
+npm test
 ```
 
 

@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react';
-import { TransactionList } from '../components/TransactionList';
-import type { StatusFilter } from '../components/TransactionList';
-import { useTransactionHub } from '../hooks/useTransactionHub';
+import { TransactionList } from '../TransactionList/TransactionList';
+import { StatusFilter, statusFilters } from '../../types/enums';
+import { useTransactionHub } from '../../hooks/useTransactionHub';
 import './MonitorDashboard.css';
-
-const statusFilters: StatusFilter[] = ['All', 'Pending', 'Completed', 'Failed'];
 
 function buildPageNumbers(current: number, total: number): Array<number | 'ellipsis'> {
   if (total <= 7) {
@@ -50,7 +48,7 @@ export function MonitorDashboard() {
     goToPage,
     pageSize,
   } = useTransactionHub();
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('All');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.All);
 
   const pageNumbers = useMemo(() => buildPageNumbers(page, totalPages), [page, totalPages]);
   const rangeStart = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;

@@ -1,6 +1,7 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
-import { AddTransaction } from './routes/AddTransaction';
-import { MonitorDashboard } from './routes/MonitorDashboard';
+import { AddTransaction } from './components/AddTransaction/AddTransaction';
+import { MonitorDashboard } from './components/MonitorDashboard/MonitorDashboard';
+import { ROUTES } from './types/consts';
 import './App.css';
 
 function App() {
@@ -8,18 +9,18 @@ function App() {
     <div className="app-shell">
       <nav className="app-nav">
         <strong className="brand">Financial Monitor</strong>
-        <NavLink to="/add" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+        <NavLink to={ROUTES.ADD} className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Simulator
         </NavLink>
-        <NavLink to="/monitor" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+        <NavLink to={ROUTES.MONITOR} className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Dashboard
         </NavLink>
       </nav>
       <main className="app-main">
         <Routes>
-          <Route path="/" element={<MonitorDashboard />} />
-          <Route path="/add" element={<AddTransaction />} />
-          <Route path="/monitor" element={<MonitorDashboard />} />
+          <Route path={ROUTES.HOME} element={<MonitorDashboard />} />
+          <Route path={ROUTES.ADD} element={<AddTransaction />} />
+          <Route path={ROUTES.MONITOR} element={<MonitorDashboard />} />
         </Routes>
       </main>
     </div>
