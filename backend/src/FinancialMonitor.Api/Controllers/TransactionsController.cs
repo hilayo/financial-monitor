@@ -40,21 +40,28 @@ public class TransactionsController : ControllerBase
         //    transaction.TransactionId,
         //    transaction.Status);
 
-        return CreatedAtAction(nameof(GetLatest), new { id = transaction.TransactionId }, transaction);
+        return CreatedAtAction(nameof(GetPaged), new { id = transaction.TransactionId }, transaction);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<Transaction>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<Transaction>>> GetLatest(
-        [FromQuery] int limit = 50,
+    [ProducesResponseType(typeof(PagedResult<Transaction>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<Transaction>>> GetPaged(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Fetching latest transactions. Limit={Limit}", limit);
+        _logger.LogInformation("Fetching paged transactions. Page={Page}, PageSize={PageSize}", page, pageSize);
 
-        var transactions = await _transactionService.GetLatestAsync(limit, cancellationToken);
+        var result = await _transactionService.GetPagedAsync(page, pageSize, cancellationToken);
 
-        _logger.LogInformation("Returned {Count} transactions", transactions.Count);
+        _logger.LogInformation(
+            "Returned {Count} transactions. Page={Page}/{TotalPages}, TotalCount={TotalCount}",
+            result.Items.Count,
+            result.Page,
+            result.TotalPages,
+            result.TotalCount);
 
-        return Ok(transactions);
+        return Ok(result);
     }
 }

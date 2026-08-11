@@ -16,6 +16,16 @@ export interface TransactionRequest {
   timestamp: string;
 }
 
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5289';
 
 export const HUB_URL = `${API_BASE_URL}/hubs/transactions`;

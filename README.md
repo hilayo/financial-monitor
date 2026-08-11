@@ -91,9 +91,23 @@ Frontend runs at [http://localhost:5173](http://localhost:5173).
 
 
 
-### GET /api/transactions?limit=50
+### GET /api/transactions?page=1&pageSize=50
 
-Returns latest transactions ordered by timestamp descending.
+Returns a paged list of transactions ordered by timestamp descending.
+
+```json
+{
+  "items": [],
+  "page": 1,
+  "pageSize": 50,
+  "totalCount": 120,
+  "totalPages": 3,
+  "hasNextPage": true,
+  "hasPreviousPage": false
+}
+```
+
+`page` starts at 1. `pageSize` defaults to 50 and must be between 1 and 200.
 
 ### SignalR Hub: /hubs/transactions
 

@@ -8,6 +8,7 @@ export type StatusFilter = TransactionStatus | 'All';
 interface TransactionListProps {
   transactions: Transaction[];
   statusFilter: StatusFilter;
+  isLoading?: boolean;
 }
 
 const statusClass: Record<TransactionStatus, string> = {
@@ -23,7 +24,11 @@ function formatAmount(amount: number, currency: string) {
   }).format(amount);
 }
 
-export function TransactionList({ transactions, statusFilter }: TransactionListProps) {
+export function TransactionList({
+  transactions,
+  statusFilter,
+  isLoading = false,
+}: TransactionListProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const filtered =
     statusFilter === 'All'
@@ -40,13 +45,13 @@ export function TransactionList({ transactions, statusFilter }: TransactionListP
   if (filtered.length === 0) {
     return (
       <div className="transaction-list empty">
-        <p>No transactions to display.</p>
+        <p>{isLoading ? 'Loading transactions…' : 'No transactions to display.'}</p>
       </div>
     );
   }
 
   return (
-    <div ref={parentRef} className="transaction-list">
+    <div ref={parentRef} className={`transaction-list${isLoading ? ' is-loading' : ''}`}>
       <div
         className="transaction-list-inner"
         style={{ height: `${virtualizer.getTotalSize()}px` }}

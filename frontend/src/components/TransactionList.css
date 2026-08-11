@@ -1,9 +1,13 @@
 .transaction-list {
-  height: calc(100vh - 220px);
+  height: calc(100vh - 280px);
   overflow: auto;
   border: 1px solid #1f2937;
   border-radius: 12px;
   background: #0f172a;
+}
+
+.transaction-list.is-loading {
+  opacity: 0.7;
 }
 
 .transaction-list.empty {

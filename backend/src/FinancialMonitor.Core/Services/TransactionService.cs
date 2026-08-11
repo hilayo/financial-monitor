@@ -6,6 +6,8 @@ namespace FinancialMonitor.Core.Services;
 
 public sealed class TransactionService : ITransactionService
 {
+    private const int MaxPageSize = 200;
+
     private readonly ITransactionRepository _repository;
     private readonly ITransactionBroadcaster _broadcaster;
 
@@ -32,13 +34,23 @@ public sealed class TransactionService : ITransactionService
         return transaction;
     }
 
-    public Task<IReadOnlyList<Transaction>> GetLatestAsync(int limit, CancellationToken cancellationToken = default)
+    public Task<PagedResult<Transaction>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        if (limit <= 0)
+        if (page <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(page), "Page must be greater than zero.");
         }
 
-        return _repository.GetLatestAsync(limit, cancellationToken);
+        if (pageSize <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be greater than zero.");
+        }
+
+        if (pageSize > MaxPageSize)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize), $"Page size must not exceed {MaxPageSize}.");
+        }
+
+        return _repository.GetPagedAsync(page, pageSize, cancellationToken);
     }
 }

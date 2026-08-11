@@ -53,13 +53,33 @@ public class TransactionServiceTests
     }
 
     [Fact]
-    public async Task GetLatestAsync_DelegatesToRepository()
+    public async Task GetPagedAsync_DelegatesToRepository()
     {
-        var expected = new List<Transaction> { new(Guid.NewGuid(), 10, "USD", TransactionStatus.Completed, DateTimeOffset.UtcNow) };
-        _repository.Setup(r => r.GetLatestAsync(5, It.IsAny<CancellationToken>())).ReturnsAsync(expected);
+        var expected = new PagedResult<Transaction>
+        {
+            Items = [new(Guid.NewGuid(), 10, "USD", TransactionStatus.Completed, DateTimeOffset.UtcNow)],
+            Page = 1,
+            PageSize = 5,
+            TotalCount = 1
+        };
+        _repository.Setup(r => r.GetPagedAsync(1, 5, It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
-        var results = await _service.GetLatestAsync(5);
+        var results = await _service.GetPagedAsync(1, 5);
 
         results.Should().BeSameAs(expected);
+    }
+
+    [Theory]
+    [InlineData(0, 10)]
+    [InlineData(-1, 10)]
+    [InlineData(1, 0)]
+    [InlineData(1, -5)]
+    [InlineData(1, 201)]
+    public async Task GetPagedAsync_WithInvalidPaging_Throws(int page, int pageSize)
+    {
+        var act = async () => await _service.GetPagedAsync(page, pageSize);
+
+        await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        _repository.Verify(r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

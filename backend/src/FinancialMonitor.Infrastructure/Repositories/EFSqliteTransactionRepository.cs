@@ -39,17 +39,27 @@ public sealed class EFSqliteTransactionRepository : ITransactionRepository
         }
     }
 
-    public async Task<IReadOnlyList<Transaction>> GetLatestAsync(int limit, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Transaction>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         await ConfigureSqliteAsync(context, cancellationToken);
 
-        return await context.Transactions
-            .AsNoTracking()
+        var query = context.Transactions.AsNoTracking();
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
             .OrderByDescending(t => t.Timestamp)
-            .Take(limit)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(t => t.ToDomain())
             .ToListAsync(cancellationToken);
+
+        return new PagedResult<Transaction>
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
     private static async Task ConfigureSqliteAsync(FinancialMonitorDbContext context, CancellationToken cancellationToken)

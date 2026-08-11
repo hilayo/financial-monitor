@@ -37,19 +37,22 @@ public class SqliteTransactionRepositoryTests : IAsyncLifetime
             timestamp ?? DateTimeOffset.UtcNow);
 
     [Fact]
-    public async Task AddAsync_ThenGetLatestAsync_ReturnsTransaction()
+    public async Task AddAsync_ThenGetPagedAsync_ReturnsTransaction()
     {
         var transaction = CreateTransaction();
 
         await _repository.AddAsync(transaction);
-        var results = await _repository.GetLatestAsync(10);
+        var results = await _repository.GetPagedAsync(1, 10);
 
-        results.Should().ContainSingle()
+        results.Items.Should().ContainSingle()
             .Which.Should().BeEquivalentTo(transaction);
+        results.TotalCount.Should().Be(1);
+        results.Page.Should().Be(1);
+        results.PageSize.Should().Be(10);
     }
 
     [Fact]
-    public async Task GetLatestAsync_ReturnsMostRecentFirst()
+    public async Task GetPagedAsync_ReturnsMostRecentFirst()
     {
         var older = CreateTransaction(timestamp: DateTimeOffset.UtcNow.AddMinutes(-5));
         var newer = CreateTransaction(timestamp: DateTimeOffset.UtcNow);
@@ -57,24 +60,34 @@ public class SqliteTransactionRepositoryTests : IAsyncLifetime
         await _repository.AddAsync(older);
         await _repository.AddAsync(newer);
 
-        var results = await _repository.GetLatestAsync(10);
+        var results = await _repository.GetPagedAsync(1, 10);
 
-        results.Should().HaveCount(2);
-        results[0].TransactionId.Should().Be(newer.TransactionId);
-        results[1].TransactionId.Should().Be(older.TransactionId);
+        results.Items.Should().HaveCount(2);
+        results.Items[0].TransactionId.Should().Be(newer.TransactionId);
+        results.Items[1].TransactionId.Should().Be(older.TransactionId);
     }
 
     [Fact]
-    public async Task GetLatestAsync_RespectsLimit()
+    public async Task GetPagedAsync_RespectsPageSizeAndOffset()
     {
         for (var i = 0; i < 5; i++)
         {
             await _repository.AddAsync(CreateTransaction(timestamp: DateTimeOffset.UtcNow.AddSeconds(i)));
         }
 
-        var results = await _repository.GetLatestAsync(3);
+        var page1 = await _repository.GetPagedAsync(1, 2);
+        var page2 = await _repository.GetPagedAsync(2, 2);
+        var page3 = await _repository.GetPagedAsync(3, 2);
 
-        results.Should().HaveCount(3);
+        page1.Items.Should().HaveCount(2);
+        page2.Items.Should().HaveCount(2);
+        page3.Items.Should().HaveCount(1);
+        page1.TotalCount.Should().Be(5);
+        page1.HasNextPage.Should().BeTrue();
+        page3.HasNextPage.Should().BeFalse();
+        page1.Items.Select(t => t.TransactionId)
+            .Intersect(page2.Items.Select(t => t.TransactionId))
+            .Should().BeEmpty();
     }
 
     [Fact]
@@ -87,10 +100,11 @@ public class SqliteTransactionRepositoryTests : IAsyncLifetime
 
         await Task.WhenAll(transactions.Select(t => _repository.AddAsync(t)));
 
-        var results = await _repository.GetLatestAsync(count);
+        var results = await _repository.GetPagedAsync(1, count);
 
-        results.Should().HaveCount(count);
-        results.Select(r => r.TransactionId)
+        results.Items.Should().HaveCount(count);
+        results.TotalCount.Should().Be(count);
+        results.Items.Select(r => r.TransactionId)
             .Should().BeEquivalentTo(transactions.Select(t => t.TransactionId));
     }
 }

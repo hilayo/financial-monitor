@@ -15,7 +15,7 @@ public class TransactionHub : Hub
 
     public async Task JoinDashboard()
     {
-        var snapshot = await _transactionService.GetLatestAsync(50);
-        await Clients.Caller.SendAsync("InitialSnapshot", snapshot);
+        var snapshot = await _transactionService.GetPagedAsync(page: 1, pageSize: 50);
+        await Clients.Caller.SendAsync("InitialSnapshot", snapshot.Items);
     }
 }

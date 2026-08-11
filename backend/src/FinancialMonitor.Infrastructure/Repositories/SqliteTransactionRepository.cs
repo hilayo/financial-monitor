@@ -92,20 +92,25 @@ public sealed class SqliteTransactionRepository : ITransactionRepository
         }
     }
 
-    public async Task<IReadOnlyList<Transaction>> GetLatestAsync(int limit, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Transaction>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
         await using var connection = CreateReadOnlyConnection();
         await connection.OpenAsync(cancellationToken);
         await ExecutePragmaAsync(connection, "PRAGMA busy_timeout=5000;", cancellationToken);
+
+        var countCommand = connection.CreateCommand();
+        countCommand.CommandText = "SELECT COUNT(*) FROM transactions";
+        var totalCount = Convert.ToInt32(await countCommand.ExecuteScalarAsync(cancellationToken));
 
         var command = connection.CreateCommand();
         command.CommandText = """
             SELECT id, amount, currency, status, timestamp
             FROM transactions
             ORDER BY timestamp DESC
-            LIMIT $limit
+            LIMIT $pageSize OFFSET $offset
             """;
-        command.Parameters.AddWithValue("$limit", limit);
+        command.Parameters.AddWithValue("$pageSize", pageSize);
+        command.Parameters.AddWithValue("$offset", (page - 1) * pageSize);
 
         var results = new List<Transaction>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -119,7 +124,13 @@ public sealed class SqliteTransactionRepository : ITransactionRepository
                 DateTimeOffset.Parse(reader.GetString(4))));
         }
 
-        return results;
+        return new PagedResult<Transaction>
+        {
+            Items = results,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
     private SqliteConnection CreateConnection() => new(_connectionString);
