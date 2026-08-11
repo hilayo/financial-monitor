@@ -1,0 +1,34 @@
+.app-shell {
+  min-height: 100vh;
+  background: #020617;
+  color: #e2e8f0;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #1e293b;
+  background: #0f172a;
+}
+
+.app-nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+}
+
+.app-nav a.active {
+  background: #1d4ed8;
+  color: white;
+}
+
+.brand {
+  margin-right: auto;
+}
+
+.app-main {
+  padding: 1.5rem;
+}

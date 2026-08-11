@@ -1,0 +1,69 @@
+.monitor-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.monitor-header p {
+  color: #94a3b8;
+}
+
+.monitor-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.connection-pill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.connection-connected {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.connection-reconnecting,
+.connection-connecting {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.connection-disconnected,
+.connection-snapshotfailed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.status-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+}
+
+.status-filter select {
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.transaction-count {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
