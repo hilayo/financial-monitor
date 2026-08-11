@@ -10,7 +10,7 @@ namespace FinancialMonitor.Tests.Repositories;
 public class EfTransactionRepositoryTests : IAsyncLifetime
 {
     private readonly string _dbPath = Path.Combine(Path.GetTempPath(), $"fm-test-{Guid.NewGuid():N}.db");
-    private EfTransactionRepository _repository = null!;
+    private EFSqliteTransactionRepository _repository = null!;
 
     public async Task InitializeAsync()
     {
@@ -18,7 +18,7 @@ public class EfTransactionRepositoryTests : IAsyncLifetime
             .UseSqlite($"Data Source={_dbPath}")
             .Options;
 
-        _repository = new EfTransactionRepository(new TestDbContextFactory(options));
+        _repository = new EFSqliteTransactionRepository(new TestDbContextFactory(options));
         await _repository.InitializeAsync();
     }
 

@@ -22,15 +22,8 @@ public class TransactionsController : ControllerBase
         [FromBody] TransactionRequest request,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var transaction = await _transactionService.ProcessAsync(request, cancellationToken);
-            return CreatedAtAction(nameof(GetLatest), new { id = transaction.TransactionId }, transaction);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        var transaction = await _transactionService.ProcessAsync(request, cancellationToken);
+        return CreatedAtAction(nameof(GetLatest), new { id = transaction.TransactionId }, transaction);
     }
 
     [HttpGet]
@@ -39,14 +32,7 @@ public class TransactionsController : ControllerBase
         [FromQuery] int limit = 50,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var transactions = await _transactionService.GetLatestAsync(limit, cancellationToken);
-            return Ok(transactions);
-        }
-        catch (ArgumentOutOfRangeException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        var transactions = await _transactionService.GetLatestAsync(limit, cancellationToken);
+        return Ok(transactions);
     }
 }
