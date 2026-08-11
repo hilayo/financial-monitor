@@ -7,14 +7,18 @@ using Serilog;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+var builder = WebApplication.CreateBuilder(args);
+
+// Read Serilog file path from configuration (appsettings.json).
+var SerilogPath = builder.Configuration["Serilog:Path"] ?? "Logs/log-.txt";
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(SerilogPath, rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers()
