@@ -168,6 +168,8 @@ financial-monitor\backend\src\FinancialMonitor.Api\Logs 
 
 2.Redis is optional in the local MVP. When Redis:ConnectionString is configured, Redis is used as a SignalR backplane to synchronize messages between multiple API replicas. set Redis ConnectionString in appsettings.json | Environment Variable
 
+3.Deploy multiple API replicas behind a load balancer.
+
 More in detail:
 
 The problem:
