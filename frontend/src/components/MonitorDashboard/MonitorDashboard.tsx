@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { TransactionList } from '../TransactionList/TransactionList';
 import { StatusFilter } from '../../types/enums';
-import { useTransactionHub } from '../../hooks/useTransactionHub';
+import { TransactionHub } from '../../helpers/transactionHub';
 import { MonitorHeader } from './MonitorHeader';
 import { Pagination } from './Pagination';
 import './MonitorDashboard.css';
 
 export function MonitorDashboard() {
+  const [hub] = useState(() => new TransactionHub());
   const {
     transactions,
     connectionState,
@@ -16,10 +17,16 @@ export function MonitorDashboard() {
     hasPreviousPage,
     totalCount,
     isLoading,
-    goToPage,
     pageSize,
-  } = useTransactionHub();
+  } = useSyncExternalStore(hub.subscribe, hub.getSnapshot);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.All);
+
+  useEffect(() => {
+    void hub.start();
+    return () => {
+      void hub.stop();
+    };
+  }, [hub]);
 
   const rangeStart = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
   const rangeEnd = Math.min(page * pageSize, totalCount);
@@ -47,7 +54,7 @@ export function MonitorDashboard() {
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
         isLoading={isLoading}
-        onPageChange={goToPage}
+        onPageChange={hub.goToPage}
       />
     </section>
   );
