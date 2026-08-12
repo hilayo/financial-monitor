@@ -1,3 +1,9 @@
+export const ROUTES = {
+  HOME: '/',
+  ADD: '/add',
+  MONITOR: '/monitor',
+} as const;
+
 export const Currency = {
   USD: 'USD',
   EUR: 'EUR',

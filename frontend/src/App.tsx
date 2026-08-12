@@ -1,7 +1,7 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
 import { AddTransaction } from './components/AddTransaction/AddTransaction';
 import { MonitorDashboard } from './components/MonitorDashboard/MonitorDashboard';
-import { ROUTES } from './types/consts';
+import { ROUTES } from './types/enums';
 import './App.css';
 
 function App() {
