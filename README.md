@@ -1,6 +1,8 @@
 # Real-Time Financial Monitor MVP
 
 A full-stack MVP for ingesting financial transactions, broadcasting updates in real time, and monitoring them from a responsive support dashboard.
+<img width="1867" height="907" alt="image" src="https://github.com/user-attachments/assets/4543040c-0312-40b4-83c3-5faf0c68525e" />
+<img width="1872" height="832" alt="image" src="https://github.com/user-attachments/assets/f6adb58e-4544-495e-b469-ce5a0fc5bea1" />
 
 ## Architecture
 
